@@ -1,7 +1,7 @@
 require("dotenv").config();
 let keys = require("./keys.js");
 let Spotify = require("node-spotify-api");
-// let spotify = new Spotify(keys.spotify);
+let spotify = new Spotify(keys.spotify);
 let fs = require("fs");
 let axios = require("axios");
 let moment = require("moment");
@@ -67,29 +67,31 @@ function concertThis() {
 //    * `spotify-this-song`
 function spotifyThis() {
 
-    let spotify = new Spotify({
-        id: keys["spotify"].id,
-        secret: keys["spotify"].secret
-    })
+    // let spotify = new Spotify({
+    //     id: keys["spotify"].id,
+    //     secret: keys["spotify"].secret
+    // })
 
     let songName = "";
+    if (process.argv[3] == null) {
+        songName = "The+Sign+Ace+of+Base";
+    }
     for (let i = 3; i < process.argv.length; i++) {
-        if (process.argv[i] === []) {
-            songName = "The+Sign";
-        } else if (i > 3 && i < process.argv.length) {
+        
+        if (i > 3 && i < process.argv.length) {
             songName = songName + "+" + process.argv[i];
         } else {
             songName += process.argv[i];
         }
     }
     let queryURL = "https://api.spotify.com/v1/search?q=track:" + songName + "&type=track&limit=10";
-    console.log(queryURL);
+    // console.log(queryURL);
 
     spotify
         .request(queryURL)
         .then(function (data) {
             // show us all the data
-            console.log(data);
+            // console.log(data.tracks);
             //      * Artist(s)
             console.log("Artist: " + data.tracks.items[0].artists[0].name);
             //      * The song's name
@@ -134,12 +136,12 @@ function movieThis() {
     }
     var queryUrl = "http://www.omdbapi.com/?t=" + movieName + "&y=&plot=short&apikey=trilogy";
     // node liri.js movie-this '<movie name here>
-    console.log(queryUrl);
+    // console.log(queryUrl);
 
     // using axios
     axios.get(queryUrl).then(
         function (response) {
-           console.log(response.data);
+          // console.log(response.data);
             // Mr. Nobody will be a default movie for data output if no movie title input by user
 
             //      * Title of the movie.
@@ -167,3 +169,14 @@ function movieThis() {
 }
 //    * `do-what-it-says`
 // This is using a require of the random.txt file
+    function doWhatItSays() {
+        fs.readFile("random.txt", "utf8", function(err, data) {
+            if (err) {
+                return console.log(err)
+            }
+            let output = data.split(",");
+            for (let i=0; i < output.length; i++) {
+                console.log(output[i]);
+            }
+        });
+    };
